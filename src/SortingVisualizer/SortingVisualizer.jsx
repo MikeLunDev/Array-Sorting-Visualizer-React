@@ -8,8 +8,9 @@ import {
 import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = 5;
-const ANIMATION_SPEED_BUBBLE = 0.5;
+const ANIMATION_SPEED_MS = 3;
+const ANIMATION_SPEED_QUICK = 6;
+const ANIMATION_SPEED_BUBBLE = 0.3;
 
 // Change this value for the number of bars (value) in the array.
 const NUMBER_OF_ARRAY_BARS = 300;
@@ -85,14 +86,14 @@ export default class SortingVisualizer extends React.Component {
         setTimeout(() => {
           barOneStyle.backgroundColor = SECONDARY_COLOR;
           barTwoStyle.backgroundColor = SECONDARY_COLOR;
-        }, i * ANIMATION_SPEED_MS);
+        }, i * ANIMATION_SPEED_QUICK);
       } else {
         setTimeout(() => {
           barOneStyle.backgroundColor = PRIMARY_COLOR;
           barTwoStyle.backgroundColor = PRIMARY_COLOR;
           barTwoStyle.height = `${animations[i][2]}px`;
           barOneStyle.height = `${animations[i][3]}px`;
-        }, i * ANIMATION_SPEED_MS);
+        }, i * ANIMATION_SPEED_QUICK);
       }
     }
   }
