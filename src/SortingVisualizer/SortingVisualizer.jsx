@@ -5,23 +5,53 @@ import {
   getQuickSortAnimations,
   getHeapSortAnimations,
 } from '../sortingAlgorithms/sortingAlgorithms.js';
+
+import {FaPause} from 'react-icons/fa';
 import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
-const ANIMATION_SPEED_MS = 3;
-const ANIMATION_SPEED_QUICK = 6;
-const ANIMATION_SPEED_BUBBLE = 0.3;
-
-// Change this value for the number of bars (value) in the array.
-const NUMBER_OF_ARRAY_BARS = 300;
+const ANIMATION_SPEED_MS = 1;
+const ANIMATION_SPEED_QUICK = 2.5;
+const ANIMATION_SPEED_BUBBLE = 0.1;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'turquoise';
-
-// This is the color of array bars that are being compared throughout the animations.
 const SECONDARY_COLOR = 'blue';
-
 const SUCCESS_COLOR = 'gold';
+
+const getPixelWidth = x => {
+  if (x <= 22) {
+    return '50px';
+  } else if (x <= 35) {
+    return '40px';
+  } else if (x <= 50) {
+    return '30px';
+  } else if (x <= 75) {
+    return '20px';
+  } else if (x <= 100) {
+    return '15px';
+  } else if (x <= 150) {
+    return '15px';
+  } else if (x <= 190) {
+    return '8px';
+  } else if (x <= 210) {
+    return '7px';
+  } else if (x <= 250) {
+    return '6px';
+  } else if (x <= 300) {
+    return '5px';
+  } else if (x <= 430) {
+    return '3.5px';
+  } else if (x <= 500) {
+    return '3px';
+  } else if (x <= 760) {
+    return '2px';
+  } else if (x <= 1000) {
+    return '1.5px';
+  } else if (x <= 1500) {
+    return '1px';
+  } else return '0.75px';
+};
 
 export default class SortingVisualizer extends React.Component {
   constructor(props) {
@@ -29,6 +59,15 @@ export default class SortingVisualizer extends React.Component {
 
     this.state = {
       array: [],
+      isFinished: false,
+      stats: {
+        name: '',
+        complexity: '',
+        swaps: 0,
+      },
+      quickSort: false,
+
+      size: 500,
     };
   }
 
@@ -36,9 +75,21 @@ export default class SortingVisualizer extends React.Component {
     this.resetArray();
   }
 
+  componentDidUpdate = (prevprops, prevstate) => {
+    if (
+      prevstate.quickSort !== this.state.quickSort &&
+      this.state.quickSort === true
+    ) {
+      this.quickSort();
+    }
+    if (prevstate.size !== this.state.size) {
+      this.resetArray();
+    }
+  };
+
   resetArray() {
     const array = [];
-    for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++) {
+    for (let i = 0; i < this.state.size; i++) {
       array.push(randomIntFromInterval(5, 684));
     }
     this.setState({array});
@@ -76,7 +127,6 @@ export default class SortingVisualizer extends React.Component {
       0,
       this.state.array.length - 1,
     );
-    console.log(animations);
     const arrayBars = document.getElementsByClassName('array-bar');
     for (let i = 0; i < animations.length; i++) {
       const [barOneIdx, barTwoIdx] = animations[i];
@@ -96,6 +146,27 @@ export default class SortingVisualizer extends React.Component {
         }, i * ANIMATION_SPEED_QUICK);
       }
     }
+    setTimeout(() => {
+      console.log('HEYY');
+      for (let j = 0; j < arrayBars.length; j++) {
+        const barOneStyle = arrayBars[j].style;
+        setTimeout(() => {
+          barOneStyle.backgroundColor = SUCCESS_COLOR;
+        }, j);
+      }
+    }, animations.length * ANIMATION_SPEED_QUICK + 400);
+
+    setTimeout(() => {
+      this.setState({
+        isFinished: !this.state.isFinished,
+        stats: {
+          name: 'Quick Sort',
+          complexity: 'O(nLogn)',
+          swaps: animations.length / 2,
+        },
+        quickSort: false,
+      });
+    }, animations.length * ANIMATION_SPEED_QUICK + 600);
   }
 
   heapSort() {
@@ -123,8 +194,6 @@ export default class SortingVisualizer extends React.Component {
 
   bubbleSort() {
     const animations = getBubbleSortAnimations(this.state.array);
-    console.log(this.state.array);
-    console.log(animations);
     const arrayBars = document.getElementsByClassName('array-bar');
     for (let i = 0; i < animations.length; i++) {
       const [barOneIdx, barTwoIdx] = animations[i];
@@ -144,29 +213,140 @@ export default class SortingVisualizer extends React.Component {
         }, i * ANIMATION_SPEED_BUBBLE);
       }
     }
+    setTimeout(() => {
+      console.log('HEYY');
+      for (let j = 0; j < arrayBars.length; j++) {
+        const barOneStyle = arrayBars[j].style;
+        setTimeout(() => {
+          barOneStyle.backgroundColor = SUCCESS_COLOR;
+        }, j);
+      }
+    }, animations.length * ANIMATION_SPEED_BUBBLE + 400);
+
+    setTimeout(() => {
+      this.setState({
+        isFinished: !this.state.isFinished,
+        stats: {
+          name: 'Bubble Sort',
+          complexity: 'O(N^2)',
+          swaps: animations.length / 2,
+        },
+        //quickSort: false,
+      });
+    }, animations.length * ANIMATION_SPEED_BUBBLE + 600);
   }
+
+  handleChange = event => {
+    //to allow only numbers
+    const arraySize = event.target.value.replace(/\D/, '');
+    this.setState({
+      size: arraySize <= 2000 ? arraySize : 2000, //to limit the size at 2000
+    });
+  };
 
   render() {
     const {array} = this.state;
-
+    const {complexity, name, swaps} = this.state.stats;
     return (
       <>
-        <div className="array-container">
-          {array.map((value, idx) => (
-            <div
-              className="array-bar"
-              key={idx}
-              style={{
-                backgroundColor: PRIMARY_COLOR,
-                height: `${value}px`,
-              }}></div>
-          ))}
+        {this.state.isFinished && (
+          <div class="card top-right">
+            <h5 class="card-header">{`${name} ${complexity}`}</h5>
+            <div class="card-body">
+              <div class="card-text">
+                <ul className="list-unstyled">
+                  <li>Array size: {array.length}</li>
+                  <li>Swaps: {swaps}</li>
+                </ul>
+              </div>
+              <button onClick={() => {}} class="btn btn-primary">
+                New Array
+              </button>
+            </div>
+          </div>
+        )}
 
-          <button onClick={() => this.resetArray()}>Generate New Array</button>
-          <button onClick={() => this.mergeSort()}>Merge Sort</button>
-          <button onClick={() => this.quickSort()}>Quick Sort</button>
-          <button onClick={() => this.heapSort()}>Heap Sort</button>
-          <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
+        <div className="container-fluid">
+          <div
+            className="row no-gutters border pt-4 mt-2 mx-1"
+            style={{minHeight: '90vh'}}>
+            <div className="col-12">
+              {array.map((value, idx) => (
+                <div
+                  className="array-bar"
+                  key={idx}
+                  style={{
+                    backgroundColor: PRIMARY_COLOR,
+                    height: `${value}px`,
+                    width: getPixelWidth(this.state.size),
+                  }}></div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="container-fluid border">
+          <div className="row no-gutters">
+            <div className="col-md-3 d-flex">
+              <label style={{fontSize: '19px'}} htmlFor="arraySize">
+                <strong>Array Size</strong>
+              </label>
+              <input
+                //need to put disabled on runtime
+                id="array size"
+                name="size"
+                value={this.state.size}
+                onChange={this.handleChange}
+                type="text"
+                className="form-control align-self-center"
+                aria-describedby="array size"
+                placeholder="1000"
+              />
+              <small id="passwordHelpBlock" class="form-text text-muted pt-2">
+                Max 2000
+              </small>
+            </div>
+            <div className="col-md-7 offset-md-2 d-flex align-items-center">
+              <button
+                className="btn btn-lg btn-primary py-1 px-1 mx-3 ml-3"
+                onClick={() => this.resetArray()}>
+                Generate New Array
+              </button>
+              <button
+                className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                onClick={() => this.mergeSort()}>
+                Merge Sort
+              </button>
+              {!this.state.quickSort && (
+                <button
+                  className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                  onClick={() => {
+                    this.setState({quickSort: true});
+                  }}>
+                  Quick Sort
+                </button>
+              )}{' '}
+              {this.state.quickSort && (
+                <button
+                  className="btn btn-lg btn-warning py-1 px-5 mx-3"
+                  style={{cursor: 'pointer'}}
+                  onClick={() => {
+                    this.setState({isGoingOn: true});
+                  }}>
+                  <FaPause />
+                </button>
+              )}
+              <button
+                className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                onClick={() => this.heapSort()}>
+                Heap Sort
+              </button>
+              <button
+                className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                onClick={() => this.bubbleSort()}>
+                Bubble Sort
+              </button>
+            </div>
+          </div>
         </div>
       </>
     );

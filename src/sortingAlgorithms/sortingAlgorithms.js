@@ -41,6 +41,36 @@ export function getQuickSortAnimations(items, left, right, animations = []) {
   return animations;
 }
 
+function swap(items, leftIndex, rightIndex, animations) {
+  //to change color
+  animations.push([leftIndex, rightIndex, items[leftIndex], items[rightIndex]]);
+  //to change position
+  animations.push([leftIndex, rightIndex, items[leftIndex], items[rightIndex]]);
+  var temp = items[leftIndex];
+  items[leftIndex] = items[rightIndex];
+  items[rightIndex] = temp;
+}
+
+function partition(items, left, right, animations) {
+  var pivot = items[Math.floor((right + left) / 2)], //middle element
+    i = left, //left pointer
+    j = right; //right pointer
+  while (i <= j) {
+    while (items[i] < pivot) {
+      i++;
+    }
+    while (items[j] > pivot) {
+      j--;
+    }
+    if (i <= j) {
+      swap(items, i, j, animations); //sawpping two elements
+      i++;
+      j--;
+    }
+  }
+  return i;
+}
+
 export function getHeapSortAnimations(input, animations = []) {
   var array_length = input.length;
 
@@ -85,37 +115,6 @@ function swapHeap(input, index_A, index_B, animations) {
   input[index_A] = input[index_B];
   input[index_B] = temp;
   return animations;
-}
-
-function swap(items, leftIndex, rightIndex, animations) {
-  console.log('inswap', animations);
-  //to change color
-  animations.push([leftIndex, rightIndex, items[leftIndex], items[rightIndex]]);
-  //to change position
-  animations.push([leftIndex, rightIndex, items[leftIndex], items[rightIndex]]);
-  var temp = items[leftIndex];
-  items[leftIndex] = items[rightIndex];
-  items[rightIndex] = temp;
-}
-
-function partition(items, left, right, animations) {
-  var pivot = items[Math.floor((right + left) / 2)], //middle element
-    i = left, //left pointer
-    j = right; //right pointer
-  while (i <= j) {
-    while (items[i] < pivot) {
-      i++;
-    }
-    while (items[j] > pivot) {
-      j--;
-    }
-    if (i <= j) {
-      swap(items, i, j, animations); //sawpping two elements
-      i++;
-      j--;
-    }
-  }
-  return i;
 }
 
 function mergeSortHelper(
