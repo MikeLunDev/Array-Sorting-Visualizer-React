@@ -1,18 +1,18 @@
 import React from 'react';
-import {
-  getMergeSortAnimations,
-  getBubbleSortAnimations,
-  getQuickSortAnimations,
-  getHeapSortAnimations,
-} from '../sortingAlgorithms/sortingAlgorithms.js';
+import {getMergeSortAnimations} from '../sortingAlgorithms/mergeSort.js';
+import {getBubbleSortAnimations} from '../sortingAlgorithms/bubbleSort';
+import {getQuickSortAnimations} from '../sortingAlgorithms/quickSort';
+import {getHeapSortAnimations} from '../sortingAlgorithms/heapSort';
+import {getInsertionSortAnimations} from '../sortingAlgorithms/insertionSort';
 
 import {FaPause} from 'react-icons/fa';
 import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
 const ANIMATION_SPEED_MS = 1;
-const ANIMATION_SPEED_QUICK = 2.5;
-const ANIMATION_SPEED_BUBBLE = 0.1;
+const ANIMATION_SPEED_QUICK = 2;
+const ANIMATION_SPEED_BUBBLE = 0.01;
+const ANIMATION_SPEED_INSERTION = 0.1;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'turquoise';
@@ -53,6 +53,10 @@ const getPixelWidth = x => {
   } else return '0.75px';
 };
 
+//random number from interval
+const randomIntFromInterval = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+
 export default class SortingVisualizer extends React.Component {
   constructor(props) {
     super(props);
@@ -66,7 +70,10 @@ export default class SortingVisualizer extends React.Component {
         swaps: 0,
       },
       quickSort: false,
-
+      mergeSort: false,
+      heapSort: false,
+      bubbleSort: false,
+      insertionSort: false,
       size: 500,
     };
   }
@@ -82,6 +89,31 @@ export default class SortingVisualizer extends React.Component {
     ) {
       this.quickSort();
     }
+    if (
+      prevstate.bubbleSort !== this.state.bubbleSort &&
+      this.state.bubbleSort === true
+    ) {
+      this.bubbleSort();
+    }
+    if (
+      prevstate.mergeSort !== this.state.mergeSort &&
+      this.state.mergeSort === true
+    ) {
+      this.mergeSort();
+    }
+    if (
+      prevstate.insertionSort !== this.state.insertionSort &&
+      this.state.insertionSort === true
+    ) {
+      this.insertionSort();
+    }
+    if (
+      prevstate.heapSort !== this.state.heapSort &&
+      this.state.heapSort === true
+    ) {
+      this.heapSort();
+    }
+    //to render real time the size
     if (prevstate.size !== this.state.size) {
       this.resetArray();
     }
@@ -89,17 +121,36 @@ export default class SortingVisualizer extends React.Component {
 
   resetArray() {
     const array = [];
+    //to stop all timeout on the page
+    //From https://stackoverflow.com/questions/3847121/how-can-i-disable-all-settimeout-events
+    var highestTimeoutId = setTimeout(';');
+    for (var i = 0; i < highestTimeoutId; i++) {
+      clearTimeout(i);
+    }
+    const arrayBars = document.getElementsByClassName('array-bar');
     for (let i = 0; i < this.state.size; i++) {
       array.push(randomIntFromInterval(5, 684));
     }
-    this.setState({array});
+    for (let j = 0; j < arrayBars.length; j++) {
+      //reset the color to original
+      const barOneStyle = arrayBars[j].style;
+      barOneStyle.backgroundColor = PRIMARY_COLOR;
+    }
+
+    this.setState({
+      array,
+      isFinished: false,
+      quickSort: false,
+      mergeSort: false,
+      heapSort: false,
+      bubbleSort: false,
+    });
   }
 
   mergeSort() {
     const animations = getMergeSortAnimations(this.state.array);
-    console.log(animations);
+    const arrayBars = document.getElementsByClassName('array-bar');
     for (let i = 0; i < animations.length; i++) {
-      const arrayBars = document.getElementsByClassName('array-bar');
       const isColorChange = i % 3 !== 2;
       if (isColorChange) {
         const [barOneIdx, barTwoIdx] = animations[i];
@@ -119,6 +170,26 @@ export default class SortingVisualizer extends React.Component {
         }, i * ANIMATION_SPEED_MS);
       }
     }
+    setTimeout(() => {
+      for (let j = 0; j < arrayBars.length; j++) {
+        const barOneStyle = arrayBars[j].style;
+        setTimeout(() => {
+          barOneStyle.backgroundColor = SUCCESS_COLOR;
+        }, j);
+      }
+    }, animations.length * ANIMATION_SPEED_MS + 400);
+
+    setTimeout(() => {
+      this.setState({
+        isFinished: !this.state.isFinished,
+        stats: {
+          name: 'Merge Sort',
+          complexity: 'O(nLogn)',
+          swaps: animations.length / 2,
+        },
+        mergeSort: false,
+      });
+    }, animations.length * ANIMATION_SPEED_MS + 600);
   }
 
   quickSort() {
@@ -146,8 +217,8 @@ export default class SortingVisualizer extends React.Component {
         }, i * ANIMATION_SPEED_QUICK);
       }
     }
+
     setTimeout(() => {
-      console.log('HEYY');
       for (let j = 0; j < arrayBars.length; j++) {
         const barOneStyle = arrayBars[j].style;
         setTimeout(() => {
@@ -190,6 +261,26 @@ export default class SortingVisualizer extends React.Component {
         }, i * ANIMATION_SPEED_MS);
       }
     }
+    setTimeout(() => {
+      for (let j = 0; j < arrayBars.length; j++) {
+        const barOneStyle = arrayBars[j].style;
+        setTimeout(() => {
+          barOneStyle.backgroundColor = SUCCESS_COLOR;
+        }, j);
+      }
+    }, animations.length * ANIMATION_SPEED_MS + 400);
+
+    setTimeout(() => {
+      this.setState({
+        isFinished: !this.state.isFinished,
+        stats: {
+          name: 'Heap Sort',
+          complexity: 'O(nLogn)',
+          swaps: animations.length / 2,
+        },
+        heapSort: false,
+      });
+    }, animations.length * ANIMATION_SPEED_MS + 600);
   }
 
   bubbleSort() {
@@ -214,7 +305,6 @@ export default class SortingVisualizer extends React.Component {
       }
     }
     setTimeout(() => {
-      console.log('HEYY');
       for (let j = 0; j < arrayBars.length; j++) {
         const barOneStyle = arrayBars[j].style;
         setTimeout(() => {
@@ -231,9 +321,52 @@ export default class SortingVisualizer extends React.Component {
           complexity: 'O(N^2)',
           swaps: animations.length / 2,
         },
-        //quickSort: false,
+        bubbleSort: false,
       });
     }, animations.length * ANIMATION_SPEED_BUBBLE + 600);
+  }
+
+  insertionSort() {
+    const animations = getInsertionSortAnimations(this.state.array);
+    const arrayBars = document.getElementsByClassName('array-bar');
+    for (let i = 0; i < animations.length; i++) {
+      const [barOneIdx, barTwoIdx] = animations[i];
+      const barOneStyle = arrayBars[barOneIdx].style;
+      const barTwoStyle = arrayBars[barTwoIdx].style;
+      if (i % 2 === 0) {
+        setTimeout(() => {
+          barOneStyle.backgroundColor = SECONDARY_COLOR;
+          barTwoStyle.backgroundColor = SECONDARY_COLOR;
+        }, i * ANIMATION_SPEED_INSERTION);
+      } else {
+        setTimeout(() => {
+          barOneStyle.backgroundColor = PRIMARY_COLOR;
+          barTwoStyle.backgroundColor = PRIMARY_COLOR;
+          barTwoStyle.height = `${animations[i][3]}px`;
+          barOneStyle.height = `${animations[i][2]}px`;
+        }, i * ANIMATION_SPEED_INSERTION);
+      }
+    }
+    setTimeout(() => {
+      for (let j = 0; j < arrayBars.length; j++) {
+        const barOneStyle = arrayBars[j].style;
+        setTimeout(() => {
+          barOneStyle.backgroundColor = SUCCESS_COLOR;
+        }, j);
+      }
+    }, animations.length * ANIMATION_SPEED_INSERTION + 400);
+
+    setTimeout(() => {
+      this.setState({
+        isFinished: !this.state.isFinished,
+        stats: {
+          name: 'Insertion Sort',
+          complexity: 'O(N^2)',
+          swaps: animations.length / 2,
+        },
+        insertionSort: false,
+      });
+    }, animations.length * ANIMATION_SPEED_INSERTION + 600);
   }
 
   handleChange = event => {
@@ -250,16 +383,18 @@ export default class SortingVisualizer extends React.Component {
     return (
       <>
         {this.state.isFinished && (
-          <div class="card top-right">
-            <h5 class="card-header">{`${name} ${complexity}`}</h5>
-            <div class="card-body">
-              <div class="card-text">
+          <div className="card top-right">
+            <h5 className="card-header">{`${name} ${complexity}`}</h5>
+            <div className="card-body">
+              <div className="card-text">
                 <ul className="list-unstyled">
                   <li>Array size: {array.length}</li>
                   <li>Swaps: {swaps}</li>
                 </ul>
               </div>
-              <button onClick={() => {}} class="btn btn-primary">
+              <button
+                onClick={() => this.resetArray()}
+                className="btn btn-primary">
                 New Array
               </button>
             </div>
@@ -291,7 +426,13 @@ export default class SortingVisualizer extends React.Component {
                 <strong>Array Size</strong>
               </label>
               <input
-                //need to put disabled on runtime
+                disabled={
+                  this.state.quickSort ||
+                  this.state.mergeSort ||
+                  this.state.bubbleSort ||
+                  this.state.heapSort ||
+                  this.state.insertionSort
+                }
                 id="array size"
                 name="size"
                 value={this.state.size}
@@ -301,23 +442,27 @@ export default class SortingVisualizer extends React.Component {
                 aria-describedby="array size"
                 placeholder="1000"
               />
-              <small id="passwordHelpBlock" class="form-text text-muted pt-2">
+              <small
+                id="passwordHelpBlock"
+                className="form-text text-muted pt-2">
                 Max 2000
               </small>
             </div>
-            <div className="col-md-7 offset-md-2 d-flex align-items-center">
+            <div className="col-md-8 offset-md-1 d-flex align-items-center">
               <button
                 className="btn btn-lg btn-primary py-1 px-1 mx-3 ml-3"
                 onClick={() => this.resetArray()}>
                 Generate New Array
               </button>
-              <button
-                className="btn btn-lg btn-primary py-1 px-1 mx-3"
-                onClick={() => this.mergeSort()}>
-                Merge Sort
-              </button>
               {!this.state.quickSort && (
                 <button
+                  disabled={
+                    this.state.mergeSort ||
+                    this.state.bubbleSort ||
+                    this.state.heapSort ||
+                    this.state.insertionSort
+                  }
+                  style={{cursor: 'pointer'}}
                   className="btn btn-lg btn-primary py-1 px-1 mx-3"
                   onClick={() => {
                     this.setState({quickSort: true});
@@ -330,31 +475,119 @@ export default class SortingVisualizer extends React.Component {
                   className="btn btn-lg btn-warning py-1 px-5 mx-3"
                   style={{cursor: 'pointer'}}
                   onClick={() => {
-                    this.setState({isGoingOn: true});
+                    this.resetArray();
                   }}>
                   <FaPause />
                 </button>
               )}
-              <button
-                className="btn btn-lg btn-primary py-1 px-1 mx-3"
-                onClick={() => this.heapSort()}>
-                Heap Sort
-              </button>
-              <button
-                className="btn btn-lg btn-primary py-1 px-1 mx-3"
-                onClick={() => this.bubbleSort()}>
-                Bubble Sort
-              </button>
+              {!this.state.insertionSort && (
+                <button
+                  disabled={
+                    this.state.mergeSort ||
+                    this.state.bubbleSort ||
+                    this.state.heapSort ||
+                    this.state.quickSort
+                  }
+                  style={{cursor: 'pointer'}}
+                  className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                  onClick={() => {
+                    this.setState({insertionSort: true});
+                  }}>
+                  Insertion Sort
+                </button>
+              )}{' '}
+              {this.state.insertionSort && (
+                <button
+                  className="btn btn-lg btn-warning py-1 px-5 mx-3"
+                  style={{cursor: 'pointer'}}
+                  onClick={() => {
+                    this.resetArray();
+                  }}>
+                  <FaPause />
+                </button>
+              )}
+              {!this.state.mergeSort && (
+                <button
+                  disabled={
+                    this.state.quickSort ||
+                    this.state.bubbleSort ||
+                    this.state.heapSort ||
+                    this.state.insertionSort
+                  }
+                  style={{cursor: 'pointer'}}
+                  className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                  onClick={() => {
+                    this.setState({mergeSort: true});
+                  }}>
+                  Merge Sort
+                </button>
+              )}{' '}
+              {this.state.mergeSort && (
+                <button
+                  className="btn btn-lg btn-warning py-1 px-5 mx-3"
+                  style={{cursor: 'pointer'}}
+                  onClick={() => {
+                    this.resetArray();
+                  }}>
+                  <FaPause />
+                </button>
+              )}
+              {!this.state.heapSort && (
+                <button
+                  disabled={
+                    this.state.quickSort ||
+                    this.state.bubbleSort ||
+                    this.state.mergeSort ||
+                    this.state.insertionSort
+                  }
+                  style={{cursor: 'pointer'}}
+                  className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                  onClick={() => {
+                    this.setState({heapSort: true});
+                  }}>
+                  Heap Sort
+                </button>
+              )}{' '}
+              {this.state.heapSort && (
+                <button
+                  className="btn btn-lg btn-warning py-1 px-5 mx-3"
+                  style={{cursor: 'pointer'}}
+                  onClick={() => {
+                    this.resetArray();
+                  }}>
+                  <FaPause />
+                </button>
+              )}
+              {!this.state.bubbleSort && (
+                <button
+                  disabled={
+                    this.state.quickSort ||
+                    this.state.heapSort ||
+                    this.state.mergeSort ||
+                    this.state.insertionSort
+                  }
+                  style={{cursor: 'pointer'}}
+                  className="btn btn-lg btn-primary py-1 px-1 mx-3"
+                  onClick={() => {
+                    this.setState({bubbleSort: true});
+                  }}>
+                  Bubble Sort
+                </button>
+              )}{' '}
+              {this.state.bubbleSort && (
+                <button
+                  className="btn btn-lg btn-warning py-1 px-5 mx-3"
+                  style={{cursor: 'pointer'}}
+                  onClick={() => {
+                    this.resetArray();
+                  }}>
+                  <FaPause />
+                </button>
+              )}
             </div>
           </div>
         </div>
       </>
     );
   }
-}
-
-// From https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
-function randomIntFromInterval(min, max) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
 }
