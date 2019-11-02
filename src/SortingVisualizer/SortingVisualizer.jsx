@@ -144,6 +144,7 @@ export default class SortingVisualizer extends React.Component {
       mergeSort: false,
       heapSort: false,
       bubbleSort: false,
+      insertionSort: false,
     });
   }
 
