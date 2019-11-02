@@ -186,7 +186,7 @@ export default class SortingVisualizer extends React.Component {
         stats: {
           name: 'Merge Sort',
           complexity: 'O(nLogn)',
-          swaps: animations.length / 2,
+          swaps: Math.floor(animations.length / 2),
         },
         mergeSort: false,
       });
