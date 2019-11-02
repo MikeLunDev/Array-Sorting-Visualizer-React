@@ -31,7 +31,7 @@ const getPixelWidth = x => {
   } else if (x <= 100) {
     return '15px';
   } else if (x <= 150) {
-    return '15px';
+    return '10px';
   } else if (x <= 190) {
     return '8px';
   } else if (x <= 210) {
