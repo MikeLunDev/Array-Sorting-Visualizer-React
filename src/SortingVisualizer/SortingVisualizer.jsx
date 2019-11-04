@@ -10,9 +10,9 @@ import './SortingVisualizer.css';
 
 // Change this value for the speed of the animations.
 const ANIMATION_SPEED_MS = 1;
-const ANIMATION_SPEED_QUICK = 2;
+const ANIMATION_SPEED_QUICK = 1.5;
 const ANIMATION_SPEED_BUBBLE = 0.01;
-const ANIMATION_SPEED_INSERTION = 0.1;
+const ANIMATION_SPEED_INSERTION = 0.05;
 
 // This is the main color of the array bars.
 const PRIMARY_COLOR = 'turquoise';
@@ -118,6 +118,7 @@ export default class SortingVisualizer extends React.Component {
       this.resetArray();
     }
   };
+
 
   resetArray() {
     const array = [];
@@ -404,7 +405,7 @@ export default class SortingVisualizer extends React.Component {
 
         <div className="container-fluid">
           <div
-            className="row no-gutters border pt-4 mt-2 mx-1"
+            className="row no-gutters border pt-4 mt-2 w-100"
             style={{minHeight: '90vh'}}>
             <div className="col-12">
               {array.map((value, idx) => (
@@ -414,7 +415,8 @@ export default class SortingVisualizer extends React.Component {
                   style={{
                     backgroundColor: PRIMARY_COLOR,
                     height: `${value}px`,
-                    width: getPixelWidth(this.state.size),
+                    width: `${95 / this.state.size}%`,
+                    //getPixelWidth(this.state.size) */
                   }}></div>
               ))}
             </div>
