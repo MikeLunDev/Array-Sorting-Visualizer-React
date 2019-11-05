@@ -15,8 +15,8 @@ const ANIMATION_SPEED_BUBBLE = 0.01;
 const ANIMATION_SPEED_INSERTION = 0.05;
 
 // This is the main color of the array bars.
-const PRIMARY_COLOR = 'turquoise';
-const SECONDARY_COLOR = 'blue';
+const PRIMARY_COLOR = 'white';
+const SECONDARY_COLOR = 'red';
 const SUCCESS_COLOR = 'gold';
 
 const getPixelWidth = x => {
@@ -118,7 +118,6 @@ export default class SortingVisualizer extends React.Component {
       this.resetArray();
     }
   };
-
 
   resetArray() {
     const array = [];
@@ -403,10 +402,10 @@ export default class SortingVisualizer extends React.Component {
           </div>
         )}
 
-        <div className="container-fluid">
+        <div className="container-fluid ">
           <div
             className="row no-gutters border pt-4 mt-2 w-100"
-            style={{minHeight: '90vh'}}>
+            style={{minHeight: '90vh', backgroundColor: 'black'}}>
             <div className="col-12">
               {array.map((value, idx) => (
                 <div
@@ -432,7 +431,6 @@ export default class SortingVisualizer extends React.Component {
                 disabled={
                   this.state.quickSort ||
                   this.state.mergeSort ||
-                  this.state.bubbleSort ||
                   this.state.heapSort ||
                   this.state.insertionSort
                 }
@@ -455,7 +453,7 @@ export default class SortingVisualizer extends React.Component {
               <button
                 className="btn btn-lg btn-primary py-1 px-1 mx-3 ml-3"
                 onClick={() => this.resetArray()}>
-                Generate New Array
+                New Array
               </button>
               {!this.state.quickSort && (
                 <button
