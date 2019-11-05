@@ -15,8 +15,8 @@ const ANIMATION_SPEED_BUBBLE = 0.01;
 const ANIMATION_SPEED_INSERTION = 0.05;
 
 // This is the main color of the array bars.
-const PRIMARY_COLOR = 'white';
-const SECONDARY_COLOR = 'red';
+const PRIMARY_COLOR = 'turquoise';
+const SECONDARY_COLOR = 'blue';
 const SUCCESS_COLOR = 'gold';
 
 const getPixelWidth = x => {
