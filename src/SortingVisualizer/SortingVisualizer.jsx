@@ -19,40 +19,6 @@ const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'blue';
 const SUCCESS_COLOR = 'gold';
 
-const getPixelWidth = x => {
-  if (x <= 22) {
-    return '50px';
-  } else if (x <= 35) {
-    return '40px';
-  } else if (x <= 50) {
-    return '30px';
-  } else if (x <= 75) {
-    return '20px';
-  } else if (x <= 100) {
-    return '15px';
-  } else if (x <= 150) {
-    return '10px';
-  } else if (x <= 190) {
-    return '8px';
-  } else if (x <= 210) {
-    return '7px';
-  } else if (x <= 250) {
-    return '6px';
-  } else if (x <= 300) {
-    return '5px';
-  } else if (x <= 430) {
-    return '3.5px';
-  } else if (x <= 500) {
-    return '3px';
-  } else if (x <= 760) {
-    return '2px';
-  } else if (x <= 1000) {
-    return '1.5px';
-  } else if (x <= 1500) {
-    return '1px';
-  } else return '0.75px';
-};
-
 //random number from interval
 const randomIntFromInterval = (min, max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
