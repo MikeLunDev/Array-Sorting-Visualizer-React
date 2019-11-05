@@ -371,7 +371,7 @@ export default class SortingVisualizer extends React.Component {
         <div className="container-fluid ">
           <div
             className="row no-gutters border pt-4 mt-2 w-100"
-            style={{minHeight: '90vh', backgroundColor: 'black'}}>
+            style={{minHeight: '90vh'}}>
             <div className="col-12">
               {array.map((value, idx) => (
                 <div
