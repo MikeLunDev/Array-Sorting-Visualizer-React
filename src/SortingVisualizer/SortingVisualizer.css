@@ -1,6 +1,7 @@
 .array-bar {
   display: inline-block;
   margin: 0 auto;
+  padding-bottom: 0;
 }
 
 .top-right {

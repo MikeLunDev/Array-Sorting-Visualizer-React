@@ -370,9 +370,9 @@ export default class SortingVisualizer extends React.Component {
 
         <div className="container-fluid ">
           <div
-            className="row no-gutters border pt-4 mt-2 w-100"
+            className="row no-gutters border pt-4 mt-2 w-100 d-flex align-items-end"
             style={{minHeight: '90vh'}}>
-            <div className="col-12">
+            <div className="col-12 pb-2">
               {array.map((value, idx) => (
                 <div
                   className="array-bar"
@@ -380,8 +380,9 @@ export default class SortingVisualizer extends React.Component {
                   style={{
                     backgroundColor: PRIMARY_COLOR,
                     height: `${value}px`,
+                    marginBottom: 0,
+                    paddingBottom: 0,
                     width: `${95 / this.state.size}%`,
-                    //getPixelWidth(this.state.size) */
                   }}></div>
               ))}
             </div>
