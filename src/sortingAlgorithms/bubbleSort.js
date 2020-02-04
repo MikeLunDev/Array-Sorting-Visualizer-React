@@ -1,5 +1,5 @@
 export function getBubbleSortAnimations(array, animations = []) {
-  var arrayToOrder = array.slice();
+  const arrayToOrder = array.slice();
   let len = arrayToOrder.length;
   for (let i = 0; i < len; i++) {
     for (let j = 0; j < len; j++) {
